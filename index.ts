@@ -21,13 +21,18 @@ ndk.pool.on("relay:connect", ({url}: {url: string}) => {
 await ndk.connect(2500);
 
 const user = await signer.user();
-console.log('Starting as: ', user.npub);
+console.log('Starting as: ', user.npub, `(${user.pubkey})`);
+
+const oneWeekAgo = Math.floor(Date.now()/1000) - 7 * 24 * 60 * 60;
 
 setTimeout(() => {
+  
   runReminders(ndk);
+
+  console.log('Subscribing to events', { since: oneWeekAgo });
   
   const sub = ndk.subscribe([
-    { kinds: [1], "#p": [user.pubkey] }
+    { kinds: [1], "#p": [user.pubkey], since: oneWeekAgo }
   ], { closeOnEose: false, groupable: false }, undefined, {
     onEvent: handleEvent,
   });

@@ -8,8 +8,6 @@ export async function handleEvent(event: NDKEvent) {
 
     console.log('Received event', event.content);
 
-    event.rea
-
     // Check if event already exists in database
     const existingEvent = db.prepare("SELECT event_id FROM events WHERE event_id = ?").get(event.id);
     if (existingEvent) return;

@@ -1,5 +1,6 @@
 import NDK, { NDKEvent, NDKUser } from "@nostr-dev-kit/ndk";
 import * as chrono from 'chrono-node';
+import { nip19 } from 'nostr-tools';
 
 // Extracts the time at which the reminder should be sent,
 // the time could be relative, like "in 10 minutes" or "at 10:00"
@@ -41,16 +42,30 @@ export function extractTime(user: NDKUser, event: NDKEvent): number | null {
  */
 export function npubInContentPosition(user: NDKUser, event: NDKEvent, ndk: NDK): number | null {
     const content = event.content;
-    const identifierRegex = /(nostr:)?npub1[a-zA-Z0-9]{58}/g;
+    // Updated regex to match both npub1 and nprofile1 formats with any length
+    const identifierRegex = /(nostr:)?(npub1|nprofile1)[a-zA-Z0-9]+/g;
     
     let match;
     while ((match = identifierRegex.exec(content)) !== null) {
         const fullMatch = match[0];
-        const npub = fullMatch.replace('nostr:', '');
+        const identifier = fullMatch.replace('nostr:', '');
         
         try {
-            const npubUser = ndk.getUser({ npub });
-            if (npubUser?.pubkey === user.pubkey) {
+            let matchedUser;
+            
+            if (identifier.startsWith('npub1')) {
+                // Handle npub case as before
+                matchedUser = ndk.getUser({ npub: identifier });
+            } else if (identifier.startsWith('nprofile1')) {
+                // Handle nprofile case using nip19.decode
+                const decoded = nip19.decode(identifier);
+                if (decoded.type === 'nprofile') {
+                    const profileData = decoded.data;
+                    matchedUser = ndk.getUser({ pubkey: profileData.pubkey });
+                }
+            }
+            
+            if (matchedUser?.pubkey === user.pubkey) {
                 return match.index + fullMatch.length;
             }
         } catch (e) {

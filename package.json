@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "start": "bun index.ts"
   },
   "keywords": [
     "nostr"
@@ -17,6 +18,9 @@
     "sqlite": "^5.1.1"
   },
   "devDependencies": {
-    "bun-types": "^1.2.4"
+    "@types/jest": "^29.5.14",
+    "bun-types": "^1.2.4",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.6"
   }
 }

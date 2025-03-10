@@ -16,8 +16,17 @@ export function extractTime(user: NDKUser, event: NDKEvent): number | null {
         ? new Date(event.created_at * 1000)
         : new Date();
     
-    // Try to parse the date/time from the text using the event creation time as reference
-    const parsedDate = chrono.parseDate(textAfterMention, referenceDate);
+    // Try parsing time from different positions in the text
+    const words = textAfterMention.split(/\s+/);
+    let parsedDate = null;
+    
+    // Try first 10 positions or until end of words
+    for (let i = 0; i < Math.min(10, words.length); i++) {
+        const textToTry = words.slice(i).join(' ');
+        parsedDate = chrono.parseDate(textToTry, referenceDate, { forwardDate: true });
+        if (parsedDate) break;
+    }
+    
     if (!parsedDate) return null;
     
     // Return timestamp in milliseconds

@@ -8,6 +8,8 @@ export async function handleEvent(event: NDKEvent) {
 
     console.log('Received event', event.content);
 
+    event.rea
+
     // Check if event already exists in database
     const existingEvent = db.prepare("SELECT event_id FROM events WHERE event_id = ?").get(event.id);
     if (existingEvent) return;
@@ -20,7 +22,7 @@ export async function handleEvent(event: NDKEvent) {
     // Extract the reminder time
     const remindAt = extractTime(botUser, event);
     if (!remindAt) {
-        console.log("\x1b[31m❌ Could not extract reminder time from event\x1b[0m", event.encode());
+        console.log("\x1b[31m❌ Could not extract reminder time from event\x1b[0m", event.content, event.encode());
         return;
     }
 
@@ -63,4 +65,5 @@ function distanceOfTimeInWordsToNow(remindAt: number): string {
 
 function reactWithOk(event: NDKEvent) {
     event.react('🫡', true);
+    console.log('🫡', event.content);
 }

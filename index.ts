@@ -11,7 +11,7 @@ if (!nsec) {
 const signer = new NDKPrivateKeySigner(nsec);
 
 const ndk = new NDK({
-  explicitRelayUrls: ["wss://relay.damus.io", 'wss://relay.nostr.band'],
+  explicitRelayUrls: ["wss://relay.primal.net", "wss://f7z.io"],
   signer,
 });
 
@@ -26,7 +26,6 @@ console.log('Starting as: ', user.npub);
 setTimeout(() => {
   runReminders(ndk);
   
-  console.log('Subscribing to events');
   const sub = ndk.subscribe([
     { kinds: [1], "#p": [user.pubkey] }
   ], { closeOnEose: false, groupable: false }, undefined, {

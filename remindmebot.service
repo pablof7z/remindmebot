@@ -1,0 +1,18 @@
+[Unit]
+Description=RemindMe Nostr Bot
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/path/to/remindmebot
+Environment="REMINDME_NSEC=your_nsec_key_here"
+ExecStart=bun index.ts
+Restart=on-failure
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=remindmebot
+
+[Install]
+WantedBy=multi-user.target
